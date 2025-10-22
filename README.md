@@ -129,4 +129,7 @@ The workflow operates based on a state machine logic managed via the `Status` fi
     * Merges internal and external results.
     * Loops through results, sending photos/text via Telegram.
 
+
+![Brief description of the image](https://github.com/FAIQahm/Real-Estate-Agent-workflow/blob/a371dfb9c690ea5e37262cbf04e7ce25317d7714/Screenshot%202025-10-22%20233732.png)
+
 -
