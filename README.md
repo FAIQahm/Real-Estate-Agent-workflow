@@ -2,7 +2,7 @@
 An n8n workflow to automate common tasks for real estate agents
 
 
-![Brief description of the image]()
+![Brief description of the image](Screenshot 2025-10-23 000723.png)
 
 # AI Real Estate Agent Chatbot (n8n + Telegram + Airtable + OpenAI)
 
