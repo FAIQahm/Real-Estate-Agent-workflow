@@ -1,0 +1,3047 @@
+{
+  "name": "Real_Estate_Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "apphFOXXCb07gjgvF",
+          "mode": "list",
+          "cachedResultName": "Karachi Based CRM",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblKxbRfUV2P6CCDw",
+          "mode": "list",
+          "cachedResultName": "Conversations",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF/tblKxbRfUV2P6CCDw"
+        },
+        "filterByFormula": "={{ $node[\"Telegram Trigger\"].json.message.chat.id }}",
+        "returnAll": false,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -1072,
+        432
+      ],
+      "id": "ab96b57a-1887-4b72-8a51-7101c81207bd",
+      "name": "Search records",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "xxMZ1mrdnXw54X8l",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a203855e-f2cb-4775-973c-0d9c7e4c233b",
+              "leftValue": "={{ $node[\"Search records\"].json.id }}",
+              "rightValue": "0",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -848,
+        432
+      ],
+      "id": "63e57c68-6b9a-497d-bd7c-cb0265080167",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are an AI classifier. Your only task is to determine if the user's message indicates an intent to BUY or SELL property. You MUST respond with ONLY the single word \"SELLER\" or the single word \"BUYER\". No other words, punctuation, or explanation are allowed."
+            },
+            {
+              "content": "=Classify the following text: \"{{ $node[\"Prepare AI Input\"].json.client_message }}\""
+            }
+          ]
+        },
+        "simplify": false,
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -400,
+        -48
+      ],
+      "id": "f21fd309-90d1-4e41-984c-2a79fea2ed9f",
+      "name": "Message a model",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "EptrhosspKRxcQO1",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.choices[0].message.content }}",
+                    "rightValue": "SELLER",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "bf4fa6c4-206d-4466-83bb-0a10fd966386"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d4bad7d7-f286-4bc8-8cdc-fb62e8600a08",
+                    "leftValue": "={{ $json.choices[0].message.content }}",
+                    "rightValue": "BUYER",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -48,
+        -48
+      ],
+      "id": "35880d35-1616-4d3e-89ed-f1fb78ce6990",
+      "name": "Switch",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "apphFOXXCb07gjgvF",
+          "mode": "list",
+          "cachedResultName": "Karachi Based CRM",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblKxbRfUV2P6CCDw",
+          "mode": "list",
+          "cachedResultName": "Conversations",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF/tblKxbRfUV2P6CCDw"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "SessionID": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+            "Status": "collecting_seller_name",
+            "ClientType": "Seller"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "SessionID",
+              "displayName": "SessionID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CollectedName",
+              "displayName": "CollectedName",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedAddress",
+              "displayName": "CollectedAddress",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedPrice",
+              "displayName": "CollectedPrice",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedArea",
+              "displayName": "CollectedArea",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedBudget",
+              "displayName": "CollectedBudget",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedEmail",
+              "displayName": "CollectedEmail",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "ClientType",
+              "displayName": "ClientType",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Seller",
+                  "value": "Seller"
+                },
+                {
+                  "name": "Buyer",
+                  "value": "Buyer"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        -144
+      ],
+      "id": "08bc82bc-0bdd-47a2-85ef-961a62252475",
+      "name": "Create a record",
+      "executeOnce": false,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "xxMZ1mrdnXw54X8l",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Status }}",
+                    "rightValue": "collecting_seller_name",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "04ac5d36-7f7b-4aee-bb3a-5f1f7c6b7ee7"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8ddb9fdc-7680-4f8e-b20e-74f44ce79d85",
+                    "leftValue": "={{ $('Search records').item.json.Status }}",
+                    "rightValue": "collecting_seller_email",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "7d89ecee-bf09-4333-98c9-b9418818afe1",
+                    "leftValue": "={{ $('Search records').item.json.Status }}",
+                    "rightValue": "collecting_seller_adress",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "7f7b5a8f-bb3e-4831-9bde-4e05f09cd190",
+                    "leftValue": "={{ $('Search records').item.json.Status }}",
+                    "rightValue": "collecting_seller_price",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ea4ebbe6-08fd-421f-8d92-9c21976b563f",
+                    "leftValue": "={{ $('Search records').item.json.Status }}",
+                    "rightValue": "collecting_seller_price",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "dfbad919-b5ae-4955-a0f5-b9a731550b60",
+                    "leftValue": "={{ $('Search records').item.json.Status }}",
+                    "rightValue": "collecting_buyer_area",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2b293928-3d9c-45c5-8363-15864bc910f5",
+                    "leftValue": "={{ $('Search records').item.json.Status }}",
+                    "rightValue": "collecting_buyer_budget",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "1fd4eb24-5762-4689-a733-d25b3de4297e",
+                    "leftValue": "={{ $('Search records').item.json.Status }}",
+                    "rightValue": "buyer_complete(1)",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c382cb19-ab76-4599-8a60-06f7b1be1872",
+                    "leftValue": "={{ $('Search records').item.json.Status }}",
+                    "rightValue": "buyer_complete",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -624,
+        800
+      ],
+      "id": "56cb2ad4-2a7b-4654-8d5c-e4f6bb41e83e",
+      "name": "Switch1",
+      "alwaysOutputData": false,
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "apphFOXXCb07gjgvF",
+          "mode": "list",
+          "cachedResultName": "Karachi Based CRM",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblKxbRfUV2P6CCDw",
+          "mode": "list",
+          "cachedResultName": "Conversations",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF/tblKxbRfUV2P6CCDw"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $node[\"Search records\"].json.id }}",
+            "CollectedName": "={{ $('Telegram Trigger').item.json.message.from.first_name }}",
+            "Status": "=collecting_seller_email"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "SessionID",
+              "displayName": "SessionID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CollectedName",
+              "displayName": "CollectedName",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CollectedAddress",
+              "displayName": "CollectedAddress",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedPrice",
+              "displayName": "CollectedPrice",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedArea",
+              "displayName": "CollectedArea",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedBudget",
+              "displayName": "CollectedBudget",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedEmail",
+              "displayName": "CollectedEmail",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "ClientType",
+              "displayName": "ClientType",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Seller",
+                  "value": "Seller"
+                },
+                {
+                  "name": "Buyer",
+                  "value": "Buyer"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": false,
+          "updateAllMatches": false
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -336,
+        144
+      ],
+      "id": "954c4f54-a52f-41b6-9cef-d2167855d969",
+      "name": "Update record",
+      "executeOnce": true,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "xxMZ1mrdnXw54X8l",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d2e5782f-7d8f-4ba9-a3ea-b949b010a948",
+              "name": "client_message",
+              "value": "={{ $node[\"Telegram Trigger\"].json.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "427233a5-e22f-43e1-812a-8ec63e7842ba",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -624,
+        -48
+      ],
+      "id": "4a84a2bb-8673-42d8-aecd-1707a2d80a49",
+      "name": "Prepare AI Input"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "hey!how can i help you in selling your property.What is your name",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        592,
+        -144
+      ],
+      "id": "4fdaf51c-6dd5-4462-b5a4-478d3ac113e1",
+      "name": "Send a text message",
+      "webhookId": "ed7dc82f-48aa-492d-8f1d-a08c71a2309a",
+      "alwaysOutputData": false,
+      "executeOnce": false,
+      "credentials": {
+        "telegramApi": {
+          "id": "Ux10FYj7MaNloku1",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "Thank you. What is your email address?",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -48,
+        144
+      ],
+      "id": "7d3ab496-e16c-465f-90c2-3f62c7c7ebd4",
+      "name": "Send a text message1",
+      "webhookId": "9cb3e5c1-51fb-4fe9-9768-423e648692f3",
+      "executeOnce": false,
+      "credentials": {
+        "telegramApi": {
+          "id": "Ux10FYj7MaNloku1",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1296,
+        432
+      ],
+      "id": "ae3e1027-f1c3-4f3d-b005-073b9c48e176",
+      "name": "Telegram Trigger",
+      "webhookId": "f51ed4e9-4d1b-4f74-8092-9461a25cd9c9",
+      "credentials": {
+        "telegramApi": {
+          "id": "Ux10FYj7MaNloku1",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "apphFOXXCb07gjgvF",
+          "mode": "list",
+          "cachedResultName": "Karachi Based CRM",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblKxbRfUV2P6CCDw",
+          "mode": "list",
+          "cachedResultName": "Conversations",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF/tblKxbRfUV2P6CCDw"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $node[\"Search records\"].json.id }}",
+            "CollectedEmail": "={{ $node[\"Telegram Trigger\"].json.message.text }}",
+            "Status": "collecting_seller_adress"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "SessionID",
+              "displayName": "SessionID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CollectedName",
+              "displayName": "CollectedName",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedAddress",
+              "displayName": "CollectedAddress",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedPrice",
+              "displayName": "CollectedPrice",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedArea",
+              "displayName": "CollectedArea",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedBudget",
+              "displayName": "CollectedBudget",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedEmail",
+              "displayName": "CollectedEmail",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -336,
+        336
+      ],
+      "id": "7f07a9da-7540-407b-9445-46992778156a",
+      "name": "Update record1",
+      "alwaysOutputData": false,
+      "executeOnce": true,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "xxMZ1mrdnXw54X8l",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $node[\"Telegram Trigger\"].json.message.chat.id }}",
+        "text": "Excellent. Now, what is the full property address?",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -48,
+        336
+      ],
+      "id": "77222b1f-fb42-4abf-b6aa-0a3411d696c7",
+      "name": "Send a text message2",
+      "webhookId": "333dfd50-b456-4f4a-8fa5-1611517f7c86",
+      "executeOnce": false,
+      "credentials": {
+        "telegramApi": {
+          "id": "Ux10FYj7MaNloku1",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $node[\"Telegram Trigger\"].json.message.chat.id }}",
+        "text": "Got it. And what is the asking price in PKR?",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        528
+      ],
+      "id": "c68ca0bc-fbe2-430e-b369-245bbf262654",
+      "name": "Send a text message3",
+      "webhookId": "77db97eb-c93d-4fc0-8b6d-276f5f015c44",
+      "executeOnce": false,
+      "credentials": {
+        "telegramApi": {
+          "id": "Ux10FYj7MaNloku1",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "apphFOXXCb07gjgvF",
+          "mode": "list",
+          "cachedResultName": "Karachi Based CRM",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblKxbRfUV2P6CCDw",
+          "mode": "list",
+          "cachedResultName": "Conversations",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF/tblKxbRfUV2P6CCDw"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "=collecting_seller_price",
+            "CollectedAddress": "={{ $node[\"Telegram Trigger\"].json.message.text }}",
+            "id": "={{ $node[\"Search records\"].json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "SessionID",
+              "displayName": "SessionID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CollectedName",
+              "displayName": "CollectedName",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedAddress",
+              "displayName": "CollectedAddress",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CollectedPrice",
+              "displayName": "CollectedPrice",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedArea",
+              "displayName": "CollectedArea",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedBudget",
+              "displayName": "CollectedBudget",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedEmail",
+              "displayName": "CollectedEmail",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -48,
+        528
+      ],
+      "id": "da406298-fd44-4eb4-b645-f8e52caaca74",
+      "name": "Update record3",
+      "executeOnce": true,
+      "alwaysOutputData": false,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "xxMZ1mrdnXw54X8l",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "apphFOXXCb07gjgvF",
+          "mode": "list",
+          "cachedResultName": "Karachi Based CRM",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblKxbRfUV2P6CCDw",
+          "mode": "list",
+          "cachedResultName": "Conversations",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF/tblKxbRfUV2P6CCDw"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $node[\"Search records\"].json.id }}",
+            "CollectedPrice": "={{ $node[\"Telegram Trigger\"].json.message.text }}",
+            "Status": "complete"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "SessionID",
+              "displayName": "SessionID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CollectedName",
+              "displayName": "CollectedName",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedAddress",
+              "displayName": "CollectedAddress",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedPrice",
+              "displayName": "CollectedPrice",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CollectedArea",
+              "displayName": "CollectedArea",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedBudget",
+              "displayName": "CollectedBudget",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedEmail",
+              "displayName": "CollectedEmail",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -336,
+        720
+      ],
+      "id": "9836fbb0-2b78-4bf7-b594-babc2d78f7fd",
+      "name": "Update record2",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "xxMZ1mrdnXw54X8l",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $node[\"Telegram Trigger\"].json.message.chat.id }}",
+        "text": "Thank you, I have all the information I need. We will review the details and be in touch with you shortly. Have a great day!",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -48,
+        720
+      ],
+      "id": "2054a93f-655a-4654-b362-8f8b265ace3f",
+      "name": "Send a text message4",
+      "webhookId": "9e172495-eae1-439b-bde1-98a40c2537d2",
+      "credentials": {
+        "telegramApi": {
+          "id": "Ux10FYj7MaNloku1",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "apphFOXXCb07gjgvF",
+          "mode": "list",
+          "cachedResultName": "Karachi Based CRM",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblKxbRfUV2P6CCDw",
+          "mode": "list",
+          "cachedResultName": "Conversations",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF/tblKxbRfUV2P6CCDw"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $node[\"Search records\"].json.id }}",
+            "CollectedPrice": "={{ $node[\"Telegram Trigger\"].json.message.text }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "SessionID",
+              "displayName": "SessionID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedName",
+              "displayName": "CollectedName",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedAddress",
+              "displayName": "CollectedAddress",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedPrice",
+              "displayName": "CollectedPrice",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CollectedArea",
+              "displayName": "CollectedArea",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedBudget",
+              "displayName": "CollectedBudget",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedEmail",
+              "displayName": "CollectedEmail",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -336,
+        912
+      ],
+      "id": "7f42f214-1745-40e5-b995-c8c78f474d07",
+      "name": "Update record4",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "xxMZ1mrdnXw54X8l",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "apphFOXXCb07gjgvF",
+          "mode": "list",
+          "cachedResultName": "Karachi Based CRM",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblKxbRfUV2P6CCDw",
+          "mode": "list",
+          "cachedResultName": "Conversations",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF/tblKxbRfUV2P6CCDw"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "SessionID": "={{ $node[\"Telegram Trigger\"].json.message.chat.id }}",
+            "Status": "=collecting_buyer_area",
+            "ClientType": "Buyer"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "SessionID",
+              "displayName": "SessionID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CollectedName",
+              "displayName": "CollectedName",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedAddress",
+              "displayName": "CollectedAddress",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedPrice",
+              "displayName": "CollectedPrice",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedArea",
+              "displayName": "CollectedArea",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedBudget",
+              "displayName": "CollectedBudget",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedEmail",
+              "displayName": "CollectedEmail",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "ClientType",
+              "displayName": "ClientType",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Seller",
+                  "value": "Seller"
+                },
+                {
+                  "name": "Buyer",
+                  "value": "Buyer"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        144
+      ],
+      "id": "a5651945-c535-4a3a-9a77-525588e590e6",
+      "name": "Create a record1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "xxMZ1mrdnXw54X8l",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $node[\"Telegram Trigger\"].json.message.chat.id }}",
+        "text": "Walaikum Salam! I can help you find the perfect property. To start, which area in Karachi are you most interested in? (e.g., DHA, Clifton, Bahria Town)",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        592,
+        144
+      ],
+      "id": "dbcc4e98-10e7-47eb-b1ed-95bad155e048",
+      "name": "Send a text message5",
+      "webhookId": "66d892b8-6e60-4092-b7ca-6356e0567457",
+      "credentials": {
+        "telegramApi": {
+          "id": "Ux10FYj7MaNloku1",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "apphFOXXCb07gjgvF",
+          "mode": "list",
+          "cachedResultName": "Karachi Based CRM",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblKxbRfUV2P6CCDw",
+          "mode": "list",
+          "cachedResultName": "Conversations",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF/tblKxbRfUV2P6CCDw"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "CollectedBudget": 0,
+            "id": "={{ $json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "SessionID",
+              "displayName": "SessionID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CollectedName",
+              "displayName": "CollectedName",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CollectedAddress",
+              "displayName": "CollectedAddress",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CollectedPrice",
+              "displayName": "CollectedPrice",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CollectedArea",
+              "displayName": "CollectedArea",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CollectedBudget",
+              "displayName": "CollectedBudget",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CollectedEmail",
+              "displayName": "CollectedEmail",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ClientType",
+              "displayName": "ClientType",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Seller",
+                  "value": "Seller"
+                },
+                {
+                  "name": "Buyer",
+                  "value": "Buyer"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -336,
+        528
+      ],
+      "id": "a07bd316-7c43-43b2-8bb8-13440daa8ba5",
+      "name": "Update record5",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "xxMZ1mrdnXw54X8l",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "apphFOXXCb07gjgvF",
+          "mode": "list",
+          "cachedResultName": "Karachi Based CRM",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblKxbRfUV2P6CCDw",
+          "mode": "list",
+          "cachedResultName": "Conversations",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF/tblKxbRfUV2P6CCDw"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $node[\"Search records\"].json.id }}",
+            "CollectedArea": "={{ $node[\"Telegram Trigger\"].json.message.text }}",
+            "Status": "collecting_buyer_budget"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "SessionID",
+              "displayName": "SessionID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CollectedName",
+              "displayName": "CollectedName",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedAddress",
+              "displayName": "CollectedAddress",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedPrice",
+              "displayName": "CollectedPrice",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedArea",
+              "displayName": "CollectedArea",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CollectedBudget",
+              "displayName": "CollectedBudget",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedEmail",
+              "displayName": "CollectedEmail",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "ClientType",
+              "displayName": "ClientType",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Seller",
+                  "value": "Seller"
+                },
+                {
+                  "name": "Buyer",
+                  "value": "Buyer"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -336,
+        1104
+      ],
+      "id": "9cfa309c-d181-4230-bb83-d48210c68229",
+      "name": "Update record6",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "xxMZ1mrdnXw54X8l",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $node[\"Telegram Trigger\"].json.message.chat.id }}",
+        "text": "=Okay, you're interested in {{ $json.fields.CollectedArea }}  What is your approximate budget in PKR? (e.g., 1 Crore, 5 Crore)",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -48,
+        1104
+      ],
+      "id": "e3eaccc8-4f05-4b93-bdb0-08fed2221de9",
+      "name": "Send a text message6",
+      "webhookId": "2130b508-6145-499a-8f77-ee13d15b5c9b",
+      "credentials": {
+        "telegramApi": {
+          "id": "Ux10FYj7MaNloku1",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "apphFOXXCb07gjgvF",
+          "mode": "list",
+          "cachedResultName": "Karachi Based CRM",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblKxbRfUV2P6CCDw",
+          "mode": "list",
+          "cachedResultName": "Conversations",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF/tblKxbRfUV2P6CCDw"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "buyer_complete(1)",
+            "CollectedBudget": "={{ $node[\"Telegram Trigger\"].json.message.text }}",
+            "id": "={{ $('Search records').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "SessionID",
+              "displayName": "SessionID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CollectedName",
+              "displayName": "CollectedName",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedAddress",
+              "displayName": "CollectedAddress",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedPrice",
+              "displayName": "CollectedPrice",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedArea",
+              "displayName": "CollectedArea",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedBudget",
+              "displayName": "CollectedBudget",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CollectedEmail",
+              "displayName": "CollectedEmail",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "ClientType",
+              "displayName": "ClientType",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Seller",
+                  "value": "Seller"
+                },
+                {
+                  "name": "Buyer",
+                  "value": "Buyer"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -336,
+        1296
+      ],
+      "id": "d20347c6-6e8f-4ebd-88cf-fd39c79835d8",
+      "name": "Search Internal Properties",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "xxMZ1mrdnXw54X8l",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-3.5-turbo",
+          "mode": "list",
+          "cachedResultName": "GPT-3.5-TURBO"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are an expert real estate data extraction assistant. Your task is to analyze Google Search results (provided as JSON, specifically the 'organic_results' array) for properties in Karachi from Zameen.com or Graana.com. Extract key details accurately and concisely."
+            },
+            {
+              "content": "=Here are the Google Search results related to the user's request (organic results only):\n{{ JSON.stringify($node[\"Search External Portals (SerpApi)\"].json.organic_results) }}\n\nPlease analyze these results. Identify the top 3-5 most relevant property listings matching the original request. For each valid listing found, extract ONLY the following information if available:\n1. Brief Description: Property type, size, beds (e.g., \"500 sq yd house, 4 beds\"). Keep it very short.\n2. Price: Asking price in PKR. Extract only the number and units (e.g., \"3.5 Crore\", \"PKR 50 Lac\").\n3. Image URL: A direct URL link to a relevant image (use the 'thumbnail' field if present, otherwise state 'Image Not Found').\n4. Listing URL: The direct URL link to the original listing page (use the 'link' field).\n\nFormat the output as a clean numbered list. If no relevant listings are found in the results, respond ONLY with the exact phrase: \"No relevant properties found.\" Do not add any introductory or concluding text."
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        176,
+        1488
+      ],
+      "id": "ffd73c14-ad72-45b8-8878-78efa9fb2c84",
+      "name": "Extract Property Details",
+      "credentials": {
+        "openAiApi": {
+          "id": "EptrhosspKRxcQO1",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-3.5-turbo",
+          "mode": "list",
+          "cachedResultName": "GPT-3.5-TURBO"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are a data formatting expert. Convert the provided text list of properties into a valid JSON array. Each object in the array should represent one property and MUST have ONLY these fields: \"Description\" (string), \"Price\" (string), \"ImageURL\" (string, use the extracted URL or \"Not Found\"), \"ListingURL\" (string). Ensure the output is ONLY the JSON array and nothing else. Handle the case where the input text says \"No relevant properties found\" by outputting an empty array []."
+            },
+            {
+              "content": "=Format this text:\n{{ $node[\"Extract Property Details\"].json.message.content }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        528,
+        1488
+      ],
+      "id": "33c1756e-6976-4633-9eb1-9168adab60c9",
+      "name": "Parse AI Results",
+      "credentials": {
+        "openAiApi": {
+          "id": "EptrhosspKRxcQO1",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "adcd2a5f-2b38-429c-bf3a-702aeddf99ed",
+              "name": "Description",
+              "value": "={{ $json.fields.Name }}",
+              "type": "string"
+            },
+            {
+              "id": "17e47d78-a7dc-4705-b9db-413b543540ae",
+              "name": "Price",
+              "value": "={{ $json.fields['Price(PKR)'] }}",
+              "type": "string"
+            },
+            {
+              "id": "c065c48a-73d9-489b-b327-8ace2f49e925",
+              "name": "ImageURL",
+              "value": "=Not Found",
+              "type": "string"
+            },
+            {
+              "id": "d5340016-649b-4cdd-881b-200a808972bc",
+              "name": "ListingURL",
+              "value": "=Internal Listing",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        592,
+        1680
+      ],
+      "id": "32d43563-cd80-48d5-ad23-e1b7aaab73e9",
+      "name": "Standardize Internal Results"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        880,
+        1640
+      ],
+      "id": "7c860834-a617-429a-bc29-b46581330dec",
+      "name": "Combine All Properties"
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "={{ $node[\"Telegram Trigger\"].json.message.chat.id }}",
+        "file": "={{ $node[\"Extract Main Image URL\"].json.message.content }}",
+        "additionalFields": {
+          "caption": "={{ $('Loop Over Items').item.json.message.content.properties[0].Description }}\nPrice: {{ $('Loop Over Items').item.json.message.content.properties[0].Price }} PKR\nMore Info: {{ $('Loop Over Items').item.json.message.content.properties[0].ListingURL }}"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1904,
+        1640
+      ],
+      "id": "472e4673-2d56-4676-8070-5c1e44178793",
+      "name": "Send a photo message",
+      "webhookId": "64a22cf3-9a18-491f-99e4-b5e9073abc33",
+      "credentials": {
+        "telegramApi": {
+          "id": "Ux10FYj7MaNloku1",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "q": "={{ $('Search records').item.json.CollectedArea }} House under{{$('Search records').item.json.CollectedBudget}} PKR site:zameen.com OR site:graana.com",
+        "locationSettings": {
+          "location": "Karachi, Sindh, Pakistan"
+        },
+        "languageSettings": {},
+        "searchOptions": {},
+        "timeFilters": {},
+        "pagination": {
+          "num": "10"
+        },
+        "advancedOptions": {},
+        "requestOptions": {}
+      },
+      "type": "@searchapi/n8n-nodes-searchapi.searchApi",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        1488
+      ],
+      "id": "e2d92120-4f51-40d0-bc8c-55a374d13d05",
+      "name": "Search External Portals (SerpApi)",
+      "credentials": {
+        "searchApi": {
+          "id": "bAwmkf5KxWKNuquA",
+          "name": "SearchApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $node[\"Telegram Trigger\"].json.message.chat.id }}",
+        "text": "Thank you, I have all the information I need. We will review the details and be in touch with you shortly. Have a great day!",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -48,
+        1296
+      ],
+      "id": "34bbc5c4-ff7a-4b1f-b021-65acf6354eca",
+      "name": "Send a text message7",
+      "webhookId": "9e172495-eae1-439b-bde1-98a40c2537d2",
+      "credentials": {
+        "telegramApi": {
+          "id": "Ux10FYj7MaNloku1",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "apphFOXXCb07gjgvF",
+          "mode": "list",
+          "cachedResultName": "Karachi Based CRM",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblKxbRfUV2P6CCDw",
+          "mode": "list",
+          "cachedResultName": "Conversations",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF/tblKxbRfUV2P6CCDw"
+        },
+        "filterByFormula": "=AND(\n    {ClientType} = 'Seller',\n    {Status} = 'complete',\n    FIND(LOWER('{{ $('Search records').item.json.CollectedArea }}'), LOWER({CollectedAddress})),\n    {CollectedPrice} <= {{$('Search records').item.json.CollectedBudget}}\n)",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        1680
+      ],
+      "id": "d8943d0a-4b1d-4352-9afe-a6fe55db5cd8",
+      "name": "Search Internal Properties1",
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "xxMZ1mrdnXw54X8l",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "apphFOXXCb07gjgvF",
+          "mode": "list",
+          "cachedResultName": "Karachi Based CRM",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblKxbRfUV2P6CCDw",
+          "mode": "list",
+          "cachedResultName": "Conversations",
+          "cachedResultUrl": "https://airtable.com/apphFOXXCb07gjgvF/tblKxbRfUV2P6CCDw"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Search records').item.json.id }}",
+            "Status": "buyer_complete"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "SessionID",
+              "displayName": "SessionID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CollectedName",
+              "displayName": "CollectedName",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedAddress",
+              "displayName": "CollectedAddress",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedPrice",
+              "displayName": "CollectedPrice",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedArea",
+              "displayName": "CollectedArea",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedBudget",
+              "displayName": "CollectedBudget",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CollectedEmail",
+              "displayName": "CollectedEmail",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "ClientType",
+              "displayName": "ClientType",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Seller",
+                  "value": "Seller"
+                },
+                {
+                  "name": "Buyer",
+                  "value": "Buyer"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -336,
+        1488
+      ],
+      "id": "1fa84106-13e4-4828-9ff0-c3ed51e8c56d",
+      "name": "Update record7",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "xxMZ1mrdnXw54X8l",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1104,
+        1640
+      ],
+      "id": "9feea5fd-f7ad-4105-85bb-5c5c4dd686ef",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.message.content.properties[0].ListingURL }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1328,
+        1536
+      ],
+      "id": "130dee5b-4cb9-471d-b710-d20ba02a37d3",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are an expert web scraping assistant. Your task is to find the direct URL of the main property image within the provided HTML code. Look for common image tags (<img>) or background images related to the primary property photo gallery. Return ONLY the single, complete URL of the most likely main image. If no image URL is found, respond ONLY with the exact text \"Not Found\"."
+            },
+            {
+              "content": "=Extract the main property image URL from this HTML:\n{{ $json.data }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1552,
+        1536
+      ],
+      "id": "ef53f1d1-456a-4a01-aba4-2e5bfc0a9f84",
+      "name": "Extract Main Image URL",
+      "credentials": {
+        "openAiApi": {
+          "id": "EptrhosspKRxcQO1",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Search records": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Prepare AI Input",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Create a record",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a record1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a record": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Update record",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update record1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update record5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update record2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update record4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update record6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search Internal Properties",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update record7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search Internal Properties1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare AI Input": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update record": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update record1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update record3": {
+      "main": [
+        [
+          {
+            "node": "Send a text message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update record2": {
+      "main": [
+        [
+          {
+            "node": "Send a text message4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a record1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update record5": {
+      "main": [
+        [
+          {
+            "node": "Update record3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update record6": {
+      "main": [
+        [
+          {
+            "node": "Send a text message6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Internal Properties": {
+      "main": [
+        [
+          {
+            "node": "Send a text message7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Property Details": {
+      "main": [
+        [
+          {
+            "node": "Parse AI Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse AI Results": {
+      "main": [
+        [
+          {
+            "node": "Combine All Properties",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Standardize Internal Results": {
+      "main": [
+        [
+          {
+            "node": "Combine All Properties",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Combine All Properties": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a photo message": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search External Portals (SerpApi)": {
+      "main": [
+        [
+          {
+            "node": "Extract Property Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Internal Properties1": {
+      "main": [
+        [
+          {
+            "node": "Standardize Internal Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update record7": {
+      "main": [
+        [
+          {
+            "node": "Search External Portals (SerpApi)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Extract Main Image URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Main Image URL": {
+      "main": [
+        [
+          {
+            "node": "Send a photo message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2aba0296-0fe1-426d-b74a-550539eb6430",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "be32fa70cf30440df35e2c84c0054507b4acaf6cd40e407cfe9a35a419863a8b"
+  },
+  "id": "pqXuOyHZtiEfFHzv",
+  "tags": []
+}
