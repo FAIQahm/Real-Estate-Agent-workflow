@@ -104,6 +104,13 @@ Follow these steps to get the workflow running:
     * *(Note: The live `Telegram Trigger` connection was unreliable during development. The primary testing method is manual execution.)*
     * If the trigger issue is resolved: Set the workflow to **`Active`**. Interact with the bot directly via your Telegram app.
 
+    ![Brief description of the image](https://github.com/FAIQahm/Real-Estate-Agent-workflow/blob/6e33b253f13eb404a534a3001596f143390b22cf/buy1.png)
+
+    ![Brief description of the image](https://github.com/FAIQahm/Real-Estate-Agent-workflow/blob/6e33b253f13eb404a534a3001596f143390b22cf/buy2.png)
+
+    ![Brief description of the image](https://github.com/FAIQahm/Real-Estate-Agent-workflow/blob/6e33b253f13eb404a534a3001596f143390b22cf/sell1.png)
+
+    ![Brief description of the image](https://github.com/FAIQahm/Real-Estate-Agent-workflow/blob/6e33b253f13eb404a534a3001596f143390b22cf/sell2.png)
 ---
 
 ##  workflow Overview
